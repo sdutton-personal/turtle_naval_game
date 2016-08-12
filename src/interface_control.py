@@ -1,3 +1,5 @@
+# @ Shawn Dutton 8-12-2016
+
 import time
 import turtle
 
@@ -46,14 +48,13 @@ class MainScreen(object):
     de_bounce_limit = .1
     last_input = time.time()
     exit_now = False
-    screen_height = 500
-    screen_width = 500
+    screen_height = 1000
+    screen_width = 1000
 
     def __init__(self, left_fun, right_fun, speed_up_fun, slow_down_fun):
         self.screen = turtle.Screen()
         self.screen.bgcolor("yellow")
         self.screen.screensize(self.screen_width, self.screen_height)
-        self.screen.maximize()
 
         # these attributes should be functions to be called after the input is sanitized.
         self.move_left_fun = left_fun
