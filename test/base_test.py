@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.interface_control import MainScreen
 
 
-class TurtleNavalBase(unittest.TestCase):
+class TurtleNavalTestBase(unittest.TestCase):
 
     __test__ = False
     end_threads = False
@@ -19,7 +19,11 @@ class TurtleNavalBase(unittest.TestCase):
     x_2 = 0
     x_3 = 0
     x_4 = 0
+    x_tst_lst = ['x_1', 'x_2', 'x_3', 'x_4']
 
+########################################################################################################################
+    # These 4 functions are only used to be passed into a main screen object for testing if needed, they serve no other
+    # purpose.
     def fun_1_used_to_test(self):
         self.x_1 += 1
 
@@ -31,19 +35,25 @@ class TurtleNavalBase(unittest.TestCase):
 
     def fun_4_used_to_test(self):
         self.x_4 += 1
+########################################################################################################################
 
     def check_x_vars(self):
-        for x in self.x_tst_lst:
-            self.results = x
+        # checks all of the x_var attributes of this class to see if they are equal to the expected.  Note that this
+        # is really only useful if all of the attributes should be the same value (you called all attributes at the
+        # same time interval).
+        for att_name in self.x_tst_lst:
+            self.results = getattr(self, att_name)
             self.run_equality_tst()
 
     def call_screen_methods(self, delay):
+        # calls all of the screen methods at a set delay interval.
         for method in self.screen_obj_method_lst:
             time.sleep(delay)
             method()
-        self.x_tst_lst = [self.x_1, self.x_2, self.x_3, self.x_4]
 
     def set_main_screen_object(self, fun_1=None, fun_2=None, fun_3=None, fun_4=None):
+        # this will set the self.screen_obj to an instance of MainScreen() with the functions provided, or stub
+        # functions if some are not provided.
 
         # these functions are provided so you don't have to provide every function if you only want to test one
         def stub_fun_1():
@@ -69,6 +79,7 @@ class TurtleNavalBase(unittest.TestCase):
 
         self.screen_obj = MainScreen(fun_1, fun_2, fun_3, fun_4)
 
+        # adds the methods for the screen_obj to the screen_obj_method_lst for more convenient iteration and testing.
         self.screen_obj_method_lst = [self.screen_obj.left, self.screen_obj.right,
                                       self.screen_obj.speed_up, self.screen_obj.slow_down]
 
