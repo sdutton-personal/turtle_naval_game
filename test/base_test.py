@@ -83,7 +83,18 @@ class TurtleNavalTestBase(unittest.TestCase):
         self.screen_obj_method_lst = [self.screen_obj.left, self.screen_obj.right,
                                       self.screen_obj.speed_up, self.screen_obj.slow_down]
 
-    def run_equality_tst(self, msg=None):
+    def round_list_or_tup_of_results_and_expected(self, round_to):
+        if isinstance(self.results, list):
+            self.results = [round(x, round_to) for x in self.results]
+        if isinstance(self.expected, list):
+            self.expected = [round(y, round_to) for y in self.expected]
+        if isinstance(self.results, tuple):
+            self.results = tuple(round(x, round_to) for x in self.results)
+        if isinstance(self.expected, tuple):
+            self.expected = tuple(round(y, round_to) for y in self.expected)
+
+
+    def run_equality_tst(self, msg=None, round_to=None):
         if not msg:
             msg = '\n\nThe result was not equal to the expected \n' \
                       'result value: *{}* \nresult type: {}\n' \
@@ -91,6 +102,9 @@ class TurtleNavalTestBase(unittest.TestCase):
                                                                         type(self.results),
                                                                         self.expected,
                                                                         type(self.expected))
+        if round_to:
+            self.results = round(self.results, round_to)
+            self.expected = round(self.expected, round_to)
         self.assertTrue(self.results == self.expected, msg=msg)
 
     def run_non_equality_tst(self, msg=None):
