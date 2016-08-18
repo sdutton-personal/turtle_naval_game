@@ -16,7 +16,7 @@ class GraphicPoint(object):
 
     def __init__(self, x, y):
         self.__init_x = x
-        self.__init_y = x
+        self.__init_y = y
         self.__init_angle_offset = None
         self.__init_distance = math.sqrt(abs(y) ** 2 + abs(x) ** 2)
 
@@ -82,9 +82,7 @@ class GraphicPoint(object):
         self.set_heading_adjustment(current_heading)
         sin = math.sin
         to_rads = math.radians
-        print self.zero_adjusted_angle
         x = (sin(to_rads(90 - self.zero_adjusted_angle)) * self.__init_distance) * self.quadrant_adjustment_tup[0]
-        print x
         y = (sin(to_rads(self.zero_adjusted_angle)) * self.__init_distance) * self.quadrant_adjustment_tup[1]
         self.current_pos = (current_center_location_tup[0] + x, current_center_location_tup[1] + y)
         return self.current_pos
