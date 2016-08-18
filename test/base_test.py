@@ -93,8 +93,7 @@ class TurtleNavalTestBase(unittest.TestCase):
         if isinstance(self.expected, tuple):
             self.expected = tuple(round(y, round_to) for y in self.expected)
 
-
-    def run_equality_tst(self, msg=None, round_to=None):
+    def run_equality_tst(self, msg=None, round_to=None, round_lst_tup_to=None):
         if not msg:
             msg = '\n\nThe result was not equal to the expected \n' \
                       'result value: *{}* \nresult type: {}\n' \
@@ -105,6 +104,8 @@ class TurtleNavalTestBase(unittest.TestCase):
         if round_to:
             self.results = round(self.results, round_to)
             self.expected = round(self.expected, round_to)
+        if round_lst_tup_to:
+            self.round_list_or_tup_of_results_and_expected(round_lst_tup_to)
         self.assertTrue(self.results == self.expected, msg=msg)
 
     def run_non_equality_tst(self, msg=None):
