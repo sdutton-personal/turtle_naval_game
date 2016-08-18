@@ -55,7 +55,10 @@ class GraphicPoint(object):
         of the point when updating point position.
         :return:
         """
-        angle = math.degrees(math.asin(abs(self.__init_y) / self.__init_distance))
+        try:
+            angle = math.degrees(math.asin(abs(self.__init_y) / self.__init_distance))
+        except ZeroDivisionError:
+            angle = 0
         if self.__init_x >= 0 and self.__init_y >= 0:
             self.__init_angle_offset = angle
             self.quadrant_adjustment_tup = (1, 1)
