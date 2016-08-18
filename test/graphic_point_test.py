@@ -318,6 +318,127 @@ class TestGraphicPoints(TurtleNavalTestBase):
         self.results = point_2.update_point_position((0, 0), 0)
         self.run_equality_tst(round_lst_tup_to=3)
 
+    def test_heading_and_movement_change_q1(self):
+        point_1 = GraphicPoint(3, 15)
+
+        self.expected = (3, 15)
+        self.results = point_1.update_point_position((0, 0), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (6.38, 44.862)
+        self.results = point_1.update_point_position((10, 30), 25)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-25.293, 1.35)
+        self.results = point_1.update_point_position((-10, 1), 100)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-15.681, -115.204)
+        self.results = point_1.update_point_position((-14, -100), 185)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (34.204, -51.681)
+        self.results = point_1.update_point_position((19, -50), 275)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+    def test_heading_and_movement_change_q2(self):
+        point_1 = GraphicPoint(-13, 15)
+
+        self.expected = (-13, 15)
+        self.results = point_1.update_point_position((0, 0), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-8.121, 38.101)
+        self.results = point_1.update_point_position((10, 30), 25)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-22.515, -14.407)
+        self.results = point_1.update_point_position((-10, 1), 100)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (0.258, -127.62)
+        self.results = point_1.update_point_position((-14, -113.81), 185)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (32.81, -35.742)
+        self.results = point_1.update_point_position((19, -50), 275)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+    def test_heading_and_movement_change_q3(self):
+        point_1 = GraphicPoint(-1, -3)
+
+        self.expected = (-1, -3)
+        self.results = point_1.update_point_position((0, 0), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (7.362, 28.858)
+        self.results = point_1.update_point_position((7, 32), 25)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-6.872, 0.536)
+        self.results = point_1.update_point_position((-10, 1), 100)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-13.265, -110.734)
+        self.results = point_1.update_point_position((-14, -113.81), 185)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (15.924, -49.265)
+        self.results = point_1.update_point_position((19, -50), 275)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+    def test_heading_and_movement_change_q4(self):
+        point_1 = GraphicPoint(1, -2)
+
+        self.expected = (1, -2)
+        self.results = point_1.update_point_position((0, 0), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (8.752, 30.61)
+        self.results = point_1.update_point_position((7, 32), 25)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-8.204, 2.332)
+        self.results = point_1.update_point_position((-10, 1), 100)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-15.171, -111.905)
+        self.results = point_1.update_point_position((-14, -113.81), 185)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (17.095, -51.171)
+        self.results = point_1.update_point_position((19, -50), 275)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+    def test_0_0(self):
+        point_1 = GraphicPoint(0, 0)
+        self.expected = (0, 0)
+        self.results = point_1.update_point_position((0, 0), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (10, -140)
+        self.results = point_1.update_point_position((10, -140), 60)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+    def test_0_points(self):
+        point_1 = GraphicPoint(15, 0)
+        self.expected = (25, 20)
+        self.results = point_1.update_point_position((10, 20), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (20.607, 30.607)
+        self.results = point_1.update_point_position((10, 20), 45)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        point_2 = GraphicPoint(0, -20)
+        self.expected = (10, -40)
+        self.results = point_2.update_point_position((10, -20), 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        self.expected = (-5.176, -39.319)
+        self.results = point_2.update_point_position((0, -20), 345)
+        self.run_equality_tst(round_lst_tup_to=3)
+
 
 if __name__ == '__main__':
     unittest.main()
