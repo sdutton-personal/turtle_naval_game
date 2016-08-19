@@ -18,7 +18,7 @@ class GraphicPoint(object):
         self.__init_x = x
         self.__init_y = y
         self.__init_angle_offset = None
-        self.__init_distance = math.sqrt(abs(y) ** 2 + abs(x) ** 2)
+        self.__init_distance = math.sqrt(y ** 2 + x ** 2)
 
         self.quadrant_adjustment_tup = None
         self.zero_adjusted_angle = None
