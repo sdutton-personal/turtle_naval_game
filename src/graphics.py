@@ -15,6 +15,10 @@ class GraphicPoint(object):
     """
 
     def __init__(self, x, y):
+        if not isinstance(x, (int, float)):
+            raise Exception('x must be supplied as an integer or a float')
+        if not isinstance(y, (int, float)):
+            raise Exception('y must be supplied as an integer or a float')
         self.__init_x = x
         self.__init_y = y
         self.__init_angle_offset = None

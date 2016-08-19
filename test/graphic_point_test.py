@@ -439,6 +439,21 @@ class TestGraphicPoints(TurtleNavalTestBase):
         self.results = point_2.update_point_position((0, -20), 345)
         self.run_equality_tst(round_lst_tup_to=3)
 
+    def check_for_error(self):
+        with self.assertRaises(Exception):
+            point = GraphicPoint('a', 1)
+        with self.assertRaises(Exception):
+            point = GraphicPoint(1, 'a')
+        with self.assertRaises(Exception):
+            point = GraphicPoint([1222], 1)
+        with self.assertRaises(Exception):
+            point = GraphicPoint(1, [12233])
+        with self.assertRaises(Exception):
+            point = GraphicPoint(None, 1)
+        with self.assertRaises(Exception):
+            point = GraphicPoint(1, None)
+        with self.assertRaises(Exception):
+            point = GraphicPoint(1)
 
 if __name__ == '__main__':
     unittest.main()
