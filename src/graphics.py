@@ -123,3 +123,16 @@ class GraphicPoint(object):
             # else quadrant_4
             self.zero_adjusted_angle = 90 - (last_heading - 270)
             self.quadrant_adjustment_tup = (1, -1)
+
+
+class GraphicLine(object):
+
+    def __init__(self, start_point, end_point, is_drawn=True):
+        pass
+
+    def update_line_position(self):
+        pass
+
+    def find_if_point_intersects(self):
+        pass
+    
