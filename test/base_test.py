@@ -6,6 +6,7 @@ import unittest
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.interface_control import MainScreen
+from src.graphics import GraphicLine
 
 
 class TurtleNavalTestBase(unittest.TestCase):
@@ -82,6 +83,27 @@ class TurtleNavalTestBase(unittest.TestCase):
         # adds the methods for the screen_obj to the screen_obj_method_lst for more convenient iteration and testing.
         self.screen_obj_method_lst = [self.screen_obj.left, self.screen_obj.right,
                                       self.screen_obj.speed_up, self.screen_obj.slow_down]
+
+    def run_line_tst(self, start_pt, end_pt, test_pt, exp_y, exp_side):
+        line_1 = GraphicLine(start_pt, end_pt, is_drawn=True)
+
+        self.results = line_1.find_y_given_x_on_two_points(start_pt[0], start_pt[1], end_pt[0], end_pt[1], test_pt[0])
+        self.expected = exp_y
+        self.run_equality_tst(round_to=3)
+
+        self.expected = exp_side
+        self.results = line_1.is_intersected_by(test_pt)
+        self.run_equality_tst()
+
+        line_2 = GraphicLine(end_pt, start_pt, is_drawn=True)
+
+        self.results = line_2.find_y_given_x_on_two_points(start_pt[0], start_pt[1], end_pt[0], end_pt[1], test_pt[0])
+        self.expected = exp_y
+        self.run_equality_tst(round_to=3)
+
+        self.expected = exp_side
+        self.results = line_2.is_intersected_by(test_pt)
+        self.run_equality_tst()
 
     def round_list_or_tup_of_results_and_expected(self, round_to):
         if isinstance(self.results, list):
