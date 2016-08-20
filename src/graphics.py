@@ -127,12 +127,133 @@ class GraphicPoint(object):
 
 class GraphicLine(object):
 
-    def __init__(self, start_point, end_point, is_drawn=True):
-        pass
+    def __init__(self, start_point, end_point, is_drawn=True, test_for_intersection=True):
+        if not isinstance(start_point, (tuple, GraphicPoint)):
+            # start_point is invalid, it must either be a tuple or a GraphicPoint
+            raise Exception('start_point must either be a tuple or a GraphicPoint')
+        if isinstance(start_point, tuple):
+            if len(start_point) != 2:
+                raise Exception('start_point tuple must contain 2 and only integer or floats Ex (15, 23.5)')
+            self.start_point = GraphicPoint(*start_point)
+        else:
+            self.start_point = start_point
+        if not isinstance(end_point, (tuple, GraphicPoint)):
+            raise Exception('end_point must be either a tuple or a GraphicPoint')
+        if isinstance(end_point, tuple):
+            if len(end_point) != 2:
+                raise Exception('start_point tuple must contain 2 and only integer or floats Ex (15, 23.5)')
+            self.end_point = GraphicPoint(*end_point)
+        else:
+            self.end_point = end_point
 
-    def update_line_position(self):
-        pass
+        self.is_drawn = is_drawn
+        self.__test_for_intersection = test_for_intersection
+        self.start_point_cur_loc = None
+        self.end_point_cur_loc = None
+        self.intersection_ind = 0
+        self.update_line_position((0, 0), 0)
+        self.hyp_distance = math.hypot(self.start_point_cur_loc[0] - self.end_point_cur_loc[0], self.start_point_cur_loc[1] - self.end_point_cur_loc[1])
 
-    def find_if_point_intersects(self):
-        pass
-    
+    def update_line_position(self, cur_ref_point_loc_tup, heading):
+        """
+        Updates the line position by taking in the current reference point location tuple, and the current heading, and
+        calling each graphic point object to find its new position.  These new positions will be stored in:
+        self.start_point_cur_loc, and self.end_Point_cur_loc
+        :param cur_ref_point_loc_tup: The current location of the center point that this line was created from.
+        :param heading: The new heading in degrees of the parent object.
+        :return:
+        """
+        self.start_point_cur_loc = self.start_point.update_point_position(cur_ref_point_loc_tup, heading)
+        self.end_point_cur_loc = self.end_point.update_point_position(cur_ref_point_loc_tup, heading)
+
+    def is_intersected_by(self, intersection_point_tup):
+        """
+        This function will determine if the given intersection_point_tup would intersect our line on the x axis, and if
+        so which side of the line the intersection point will reside on. If the point would not intersect our line, we
+        will return 0.  If it intersects on the left side or is exactly on our line we will return 1.  If it intersects
+        on the right side we will return 2.
+        :param intersection_point_tup: A tuple representing a point on an (x,y) axis.
+        :return:
+        0 for No intersection
+        1 for intersection on the left
+        2 for intersection on the right
+        """
+        if self.__test_for_intersection:
+            start_x = self.start_point_cur_loc[0]
+            start_y = self.start_point_cur_loc[1]
+            end_x = self.end_point_cur_loc[0]
+            end_y = self.end_point_cur_loc[1]
+            intersect_x = intersection_point_tup[0]
+            intersect_y = intersection_point_tup[1]
+
+            if start_y > intersect_y:
+                if end_y > intersect_y:
+                    # intersection point is below our line return 0
+                    return 0
+            if start_y < intersect_y:
+                if end_y < intersect_y:
+                    # intersection point is above our line return 0
+                    return 0
+            # at this point the point must be in between our line, as if it were above or below we would have returned.
+            # now test to see if the point is to the left or the right of both x points.
+            if start_x > intersect_x:
+                if end_x > intersect_x:
+                    # intersection point is to the left, or less than both of our points.
+                    return 1
+            if start_x < intersect_x:
+                if end_x < intersect_x:
+                    # intersection point is the to right, or greater than both of our points.
+                    return 2
+            # the intersection point is now between both x's and both y's, so we will do some geometry to find out its
+            # exact location in reference to our line.
+            line_y = self.find_y_given_x_on_two_points(start_x, start_y, end_x, end_y, intersect_x)
+            slope = 1
+            if end_x > start_x:
+                slope *= -1
+            if end_y > start_y:
+                slope *= -1
+            if slope > 0:
+                if intersect_y >= line_y:
+                    # if the line orientation is positive, and our intersect_y is greater than or = to the y where the x
+                    # intersects then we are on the left side of the line, or on the line, so return 1
+                    return 1
+                else:
+                    # orientation is positive, yet our intersect y is smaller, so we are on the right side of the line.
+                    return 2
+            else:
+                if intersect_y <= line_y:
+                    # if the line orientation is negative, and or intersect_y is less than or = to the y where the x
+                    # intersects then we are on the left side of the line, or on the line, so return 1
+                    return 1
+                else:
+                    # orientation is negative, and our intersect y is greater than the y on the line, so we are on the
+                    # right side.
+                    return 2
+        else:
+            # this line should not be tested for intersection, so return 0
+            return 0
+
+    def find_y_given_x_on_two_points(self, x_1, y_1, x_2, y_2, x_to_find):
+        try:
+            angle = math.degrees(math.asin(abs(y_1 - y_2) / self.hyp_distance))
+        except ZeroDivisionError:
+            angle = 0
+        # get the line angle
+        x_to_find -= x_2
+        # subtract the x of the 2nd point, this will "zero" out the x value
+        y_to_find = math.tan(math.radians(angle)) * x_to_find
+        # get the y of the point, note this is an "absolute" y from a 0,0 point
+        y_to_find += y_2
+        # add the y_2 to the absolute y so we can have our actual y value.
+
+        if y_2 < y_1:
+            # flip the orientation if y_2 is smaller
+            y_to_find *= -1
+        if x_2 < x_1:
+            # flip the orientation if x_2 is smaller.  If both y_2 and x_2 are smaller, the orientation will be flipped
+            # back, this is desired.
+            y_to_find *= -1
+        # these above two if statements I believe are a more efficient way of determining line orientation than
+        # actually performing the slope calculation.  If
+
+        return y_to_find
