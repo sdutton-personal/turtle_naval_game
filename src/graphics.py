@@ -205,14 +205,19 @@ class GraphicLine(object):
                     # intersection point is the to right, or greater than both of our points.
                     return 2
             # the intersection point is now between both x's and both y's, so we will do some geometry to find out its
-            # exact location in reference to our line.
+            # exact location in reference to our line.  The below function will give us the y value on the line that
+            # the x of the point in question would intersect on.
             line_y = self.find_y_given_x_on_two_points(start_x, start_y, end_x, end_y, intersect_x)
+
+            # find the slope of the line, this is used for determining if points are on the left or the right.
             slope = 1
             if end_x > start_x:
                 slope *= -1
             if end_y > start_y:
                 slope *= -1
+
             if slope > 0:
+                # logic for positive slope
                 if intersect_y >= line_y:
                     # if the line orientation is positive, and our intersect_y is greater than or = to the y where the x
                     # intersects then we are on the left side of the line, or on the line, so return 1
@@ -221,6 +226,7 @@ class GraphicLine(object):
                     # orientation is positive, yet our intersect y is smaller, so we are on the right side of the line.
                     return 2
             else:
+                # logic for negative slope
                 if intersect_y <= line_y:
                     # if the line orientation is negative, and or intersect_y is less than or = to the y where the x
                     # intersects then we are on the left side of the line, or on the line, so return 1
@@ -234,26 +240,45 @@ class GraphicLine(object):
             return 0
 
     def find_y_given_x_on_two_points(self, x_1, y_1, x_2, y_2, x_to_find):
+        """
+        This function will take x values and y values from two points and use them to find the y value on the line where
+        the provided x_to_find value would intersect the line.
+        :param x_1: x of the start point
+        :param y_1: y of the start point
+        :param x_2: x of the end point
+        :param y_2: y of the end point
+        :param x_to_find: x value of the point to find the y value where the line is intersected.
+        :return: y value where the x value intersects the line.
+        """
+        # get the angle
         try:
             angle = math.degrees(math.asin(abs(y_1 - y_2) / self.hyp_distance))
         except ZeroDivisionError:
             angle = 0
-        # get the line angle
-        x_to_find -= x_2
+
+        # get the slope, this is used to determine how to correct the y and also to shift the y value positive or
+        # negative
+        slope = 1
+        if x_2 > x_1:
+            slope *= -1
+        if y_2 > y_1:
+            slope *= -1
+
         # subtract the x of the 2nd point, this will "zero" out the x value
-        y_to_find = math.tan(math.radians(angle)) * x_to_find
+        x_to_find -= x_2
+
         # get the y of the point, note this is an "absolute" y from a 0,0 point
-        y_to_find += y_2
-        # add the y_2 to the absolute y so we can have our actual y value.
+        y_to_find = math.tan(math.radians(angle)) * x_to_find
 
-        if y_2 < y_1:
-            # flip the orientation if y_2 is smaller
+        if slope > 0:
+            # if the slope is positive, add the y back in
+            y_to_find += y_2
+        else:
+            # if the slope is negative, subtract the y and then multiply the y to find by -1 correcting its slope
+            y_to_find -= y_2
             y_to_find *= -1
-        if x_2 < x_1:
-            # flip the orientation if x_2 is smaller.  If both y_2 and x_2 are smaller, the orientation will be flipped
-            # back, this is desired.
-            y_to_find *= -1
-        # these above two if statements I believe are a more efficient way of determining line orientation than
-        # actually performing the slope calculation.  If
 
-        return y_to_find
+        # round to 5th decimal place, as our use only needs accuracy to the 2nd decimal place, so the extra three are
+        # just over kill and for good measure.  This will help to make sure equality tests that may be performed would
+        # not fail on something like 25.0000000000001 == 25.0.  For our purposes 25.000000000001 is == to 25.0.
+        return round(y_to_find, 5)
