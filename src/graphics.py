@@ -179,12 +179,19 @@ class GraphicLine(object):
         2 for intersection on the right
         """
         if self.__test_for_intersection:
-            start_x = self.start_point_cur_loc[0]
-            start_y = self.start_point_cur_loc[1]
-            end_x = self.end_point_cur_loc[0]
-            end_y = self.end_point_cur_loc[1]
-            intersect_x = intersection_point_tup[0]
-            intersect_y = intersection_point_tup[1]
+            # Added in the below rounding of the points to the 5th decimal place.  This will prevent what would seem to
+            # be "unpredictable" behaviour when comparing points that actually exist on the line, or are the same as
+            # the end or the start point.  If the rounding was left out, a point on the line may show up as right of
+            # the line if the y value was negative on a positive slope line, or positive on a negative slope line.  This
+            # would happen because the start and end values when re calculated would come in as something like:
+            # 12.0000000000001 , or -12.000000000001, and would not be equal to the test value of 12.0, or -12.0 when as
+            # far as we are concerned those values should be equal.
+            start_x = round(self.start_point_cur_loc[0], 5)
+            start_y = round(self.start_point_cur_loc[1], 5)
+            end_x = round(self.end_point_cur_loc[0], 5)
+            end_y = round(self.end_point_cur_loc[1], 5)
+            intersect_x = round(intersection_point_tup[0], 5)
+            intersect_y = round(intersection_point_tup[1], 5)
 
             if start_y > intersect_y:
                 if end_y > intersect_y:
