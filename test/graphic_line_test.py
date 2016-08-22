@@ -113,3 +113,5 @@ class TestGraphicLines(TurtleNavalTestBase):
         self.run_line_tst(start_pt=start_pt, end_pt=end_pt, test_pt=(-5, -18), exp_y=-17, exp_side=2)
 
 
+if __name__ == '__main__':
+    unittest.main()
