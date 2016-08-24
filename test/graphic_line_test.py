@@ -2,15 +2,68 @@ import unittest
 
 from base_test import TurtleNavalTestBase
 from src.graphics import GraphicLine
+from src.graphics import GraphicPoint
 
 
 class TestGraphicLines(TurtleNavalTestBase):
 
     __test__ = True
-    expected_line_y_intersect = None
 
     def test_all_general_operation(self):
-        pass
+        line_1 = GraphicLine((1, 5), (5, 6))
+
+        self.results = line_1.is_drawn
+        self.expected = True
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by((1, 5))
+        self.expected = 1
+        self.run_equality_tst()
+
+        line_2 = GraphicLine((1, 5), (5, 6), True, True)
+
+        self.results = line_2.is_drawn
+        self.expected = True
+        self.run_equality_tst()
+
+        self.results = line_2.is_intersected_by((1, 5))
+        self.expected = 1
+        self.run_equality_tst()
+
+        line_3 = GraphicLine((1, 5), (5, 6), False, False)
+
+        self.results = line_3.is_drawn
+        self.expected = False
+        self.run_equality_tst()
+
+        self.results = line_3.is_intersected_by((1, 5))
+        self.expected = 0
+        self.run_equality_tst()
+
+        p1 = GraphicPoint(1, 5)
+        p2 = GraphicPoint(5, 6)
+
+        line_4 = GraphicLine(p1, p2)
+
+        self.results = line_4.is_drawn
+        self.expected = True
+        self.run_equality_tst()
+
+        self.results = line_4.is_intersected_by((1, 5))
+        self.expected = 1
+
+    def test_error_conditions(self):
+        with self.assertRaises(Exception):
+            line_1 = GraphicLine((1, 5), 'bacdd')
+
+        with self.assertRaises(Exception):
+            line_2 = GraphicLine('bacdd', (1, 5))
+
+        with self.assertRaises(Exception):
+            line_3 = GraphicLine((1, 4, 5), (1, 5))
+
+        with self.assertRaises(Exception):
+            line_4 = GraphicLine((1, 4), (1, 5, 5))
 
     def test_point_location_and_expected_side_function_in_q1(self):
         # test line creation and side function in q1, (x and y both positive)
@@ -144,7 +197,71 @@ class TestGraphicLines(TurtleNavalTestBase):
         self.run_line_tst(start_pt=start_pt, end_pt=end_pt, test_pt=(7, -56), exp_y=-55, exp_side=2)
         self.run_line_tst(start_pt=start_pt, end_pt=end_pt, test_pt=(6, -70), exp_y=-65, exp_side=2)
 
+    def test_line_movement(self):
+        start_pt = (5, -75)
+        end_pt = (10, -25)
+        line_1 = GraphicLine(start_pt, end_pt)
 
+        tst_tup_1 = (7, -50)
+        tst_tup_2 = (7, -60)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 1
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 2
+        self.run_equality_tst()
+
+        line_1.update_line_position((4, 0), 0)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 1
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 1
+        self.run_equality_tst()
+
+        line_1.update_line_position((-4, 0), 0)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 2
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 2
+        self.run_equality_tst()
+
+        line_1.update_line_position((-20, 0), 30)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 1
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 1
+        self.run_equality_tst()
+
+        line_1.update_line_position((0, 0), 300)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 0
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 0
+        self.run_equality_tst()
+
+        line_1.update_line_position((-50, -25), 60)
+
+        self.results = line_1.is_intersected_by(tst_tup_1)
+        self.expected = 2
+        self.run_equality_tst()
+
+        self.results = line_1.is_intersected_by(tst_tup_2)
+        self.expected = 0
+        self.run_equality_tst()
 
 if __name__ == '__main__':
     unittest.main()
