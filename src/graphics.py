@@ -289,3 +289,72 @@ class GraphicLine(object):
         # just over kill and for good measure.  This will help to make sure equality tests that may be performed would
         # not fail on something like 25.0000000000001 == 25.0.  For our purposes 25.000000000001 is == to 25.0.
         return round(y_to_find, 5)
+
+
+class GraphicShape(object):
+
+    graphic_lines_lst = []
+    points_to_draw_lst = []
+    scale = 0
+    shape_fill_color = 'gray'
+    shape_line_color = 'black'
+
+    __overall_length = None
+    __overall_width = None
+    __shape_to_overall_scale = None
+    __scale = None
+    base_points_lst = []
+
+    def __init__(self, overall_length, overall_width, shape_to_overall_scale, scale=0):
+        self.__overall_length = overall_length
+        self.__overall_width = overall_width
+        self.__shape_to_overall_scale = shape_to_overall_scale
+        self.__scale = scale
+        self.__scale_width = self.__overall_width + (self.__overall_width * self.__scale / 100)
+        self.__scale_length = self.__overall_length + (self.__overall_length * self.__scale / 100)
+
+        self.load_graphic_lines()
+        self.load_points_to_draw()
+
+    def load_graphic_lines(self):
+        """
+        Over write this method when inheriting this class
+        :return:
+        """
+        pass
+
+    def load_points_to_draw(self):
+        last_point = None
+        for line in self.graphic_lines_lst:
+            if line.is_drawn:
+                if line.start_point_cur_loc != last_point:
+                    self.points_to_draw_lst.append(line.start_point_cur_loc)
+                self.points_to_draw_lst.append(line.end_point_cur_loc)
+                last_point = line.end_point_cur_loc
+
+    def update_shape_position(self, cur_ref_point_loc_tup, heading):
+        for line in self.graphic_lines_lst:
+            line.update_line_position(cur_ref_point_loc_tup, heading)
+
+    def is_point_inside_shape(self, point_in_question_tup):
+
+        intersection_reference_total = 0
+        for line in self.graphic_lines_lst:
+            intersection_reference_total += line.is_intersected_by(point_in_question_tup)
+
+        if intersection_reference_total == 3:
+            return True
+        else:
+            return False
+
+
+class BowShape(GraphicShape):
+
+    def load_graphic_lines(self):
+        point_1_tup = (self.__scale_width / 2, self.__scale_length / self.__shape_to_overall_scale)
+        point_2_tup = (0, self.__scale_length / 2)
+        point_3_tup = (-self.__scale_width / 2, self.__scale_length / self.__shape_to_overall_scale)
+
+        self.graphic_lines_lst.append(GraphicLine(point_1_tup, point_2_tup))
+        self.graphic_lines_lst.append(GraphicLine(point_2_tup, point_3_tup))
+        self.graphic_lines_lst.append(GraphicLine(point_3_tup, point_1_tup, is_drawn=False))
