@@ -293,25 +293,20 @@ class GraphicLine(object):
 
 class GraphicShape(object):
 
-    graphic_lines_lst = []
-    points_to_draw_lst = []
-    scale = 0
-    shape_fill_color = 'gray'
-    shape_line_color = 'black'
-
-    __overall_length = None
-    __overall_width = None
-    __shape_to_overall_scale = None
-    __scale = None
-    base_points_lst = []
+    _shape_to_overall_scale = None
+    _scale = None
+    _scale_width = None
+    _scale_length = None
 
     def __init__(self, overall_length, overall_width, shape_to_overall_scale, scale=0):
-        self.__overall_length = overall_length
-        self.__overall_width = overall_width
-        self.__shape_to_overall_scale = shape_to_overall_scale
-        self.__scale = scale
-        self.__scale_width = self.__overall_width + (self.__overall_width * self.__scale / 100)
-        self.__scale_length = self.__overall_length + (self.__overall_length * self.__scale / 100)
+        self.graphic_lines_lst = []
+        self.points_to_draw_lst = []
+        self._overall_length = overall_length
+        self._overall_width = overall_width
+        self._shape_to_overall_scale = shape_to_overall_scale
+        self._scale = scale
+        self._scale_width = self._overall_width + (self._overall_width * self._scale / 100)
+        self._scale_length = self._overall_length + (self._overall_length * self._scale / 100)
 
         self.load_graphic_lines()
         self.load_points_to_draw()
@@ -327,10 +322,12 @@ class GraphicShape(object):
         last_point = None
         for line in self.graphic_lines_lst:
             if line.is_drawn:
-                if line.start_point_cur_loc != last_point:
-                    self.points_to_draw_lst.append(line.start_point_cur_loc)
-                self.points_to_draw_lst.append(line.end_point_cur_loc)
-                last_point = line.end_point_cur_loc
+                start_point_tup = (round(line.start_point_cur_loc[1], 5), round(line.start_point_cur_loc[0], 5))
+                end_point_tup = (round(line.end_point_cur_loc[1], 5), round(line.end_point_cur_loc[0], 5))
+                if start_point_tup != last_point:
+                    self.points_to_draw_lst.append(start_point_tup)
+                self.points_to_draw_lst.append(end_point_tup)
+                last_point = end_point_tup
 
     def update_shape_position(self, cur_ref_point_loc_tup, heading):
         for line in self.graphic_lines_lst:
@@ -350,11 +347,48 @@ class GraphicShape(object):
 
 class BowShape(GraphicShape):
 
-    def load_graphic_lines(self):
-        point_1_tup = (self.__scale_width / 2, self.__scale_length / self.__shape_to_overall_scale)
-        point_2_tup = (0, self.__scale_length / 2)
-        point_3_tup = (-self.__scale_width / 2, self.__scale_length / self.__shape_to_overall_scale)
+    fill_color = 'gray'
+    line_color = 'black'
 
-        self.graphic_lines_lst.append(GraphicLine(point_1_tup, point_2_tup))
-        self.graphic_lines_lst.append(GraphicLine(point_2_tup, point_3_tup))
-        self.graphic_lines_lst.append(GraphicLine(point_3_tup, point_1_tup, is_drawn=False))
+    def load_graphic_lines(self):
+        bow_port_point = GraphicPoint(self._scale_length / self._shape_to_overall_scale, self._scale_width / 2)
+        bow_point = GraphicPoint(self._scale_length / 2, 0)
+        bow_starboard_point = GraphicPoint(self._scale_length / self._shape_to_overall_scale, -self._scale_width / 2)
+
+        self.graphic_lines_lst.append(GraphicLine(bow_port_point, bow_point))
+        self.graphic_lines_lst.append(GraphicLine(bow_point, bow_starboard_point))
+        self.graphic_lines_lst.append(GraphicLine(bow_starboard_point, bow_port_point, is_drawn=False))
+
+
+class HullShape(GraphicShape):
+
+    fill_color = 'gray'
+    line_color = 'black'
+
+    def load_graphic_lines(self):
+        bow_starboard_point = (self._scale_length / self._shape_to_overall_scale, -self._scale_width / 2)
+        stern_st_starboard_point = (-self._scale_length / self._shape_to_overall_scale, -self._scale_width / 2)
+        stern_port_point = (-self._scale_length / self._shape_to_overall_scale, self._scale_width / 2)
+        bow_port_point = (self._scale_length / self._shape_to_overall_scale, self._scale_width / 2)
+
+        self.graphic_lines_lst.append(GraphicLine(bow_starboard_point, stern_st_starboard_point))
+        self.graphic_lines_lst.append(GraphicLine(stern_st_starboard_point, stern_port_point))
+        self.graphic_lines_lst.append(GraphicLine(stern_port_point, bow_port_point))
+        self.graphic_lines_lst.append(GraphicLine(bow_port_point, bow_starboard_point, is_drawn=False))
+
+
+class SternShape(GraphicShape):
+
+    fill_color = 'gray'
+    line_color = 'black'
+
+    def load_graphic_lines(self):
+        stern_hull_port_point = (-self._scale_length / self._shape_to_overall_scale, self._scale_width / 2)
+        stern_end_port_point = (-self._scale_length / 2.5, self._scale_width / 3)
+        stern_end_starboard_point = (-self._scale_length / 2.5, -self._scale_width / 3)
+        stern_hull_starboard_point = (-self._scale_length / self._shape_to_overall_scale, -self._scale_width / 2)
+
+        self.graphic_lines_lst.append(GraphicLine(stern_hull_port_point, stern_end_port_point))
+        self.graphic_lines_lst.append(GraphicLine(stern_end_port_point, stern_end_starboard_point))
+        self.graphic_lines_lst.append(GraphicLine(stern_end_starboard_point, stern_hull_starboard_point))
+        self.graphic_lines_lst.append(GraphicLine(stern_hull_starboard_point, stern_hull_port_point, is_drawn=False))
