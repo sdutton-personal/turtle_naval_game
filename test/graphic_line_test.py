@@ -263,5 +263,63 @@ class TestGraphicLines(TurtleNavalTestBase):
         self.expected = 0
         self.run_equality_tst()
 
+    def test_line_movement_positions(self):
+        line_1 = GraphicLine((-5, -5), (5, 5))
+
+        self.results = line_1.start_point_cur_loc
+        self.expected = (-5, -5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((0, 0), 90)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (5, -5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (-5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((0, 0), 180)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (-5, -5)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((0, 0), 270)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (-5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (5, -5)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((0, 0), 360)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (-5, -5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((10, -5), 0)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (5, -10)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (15, 0)
+        self.run_equality_tst(round_lst_tup_to=3)
+
+        line_1.update_line_position((10, 10), 0)
+        self.results = line_1.start_point_cur_loc
+        self.expected = (5, 5)
+        self.run_equality_tst(round_lst_tup_to=3)
+        self.results = line_1.end_point_cur_loc
+        self.expected = (15, 15)
+        self.run_equality_tst(round_lst_tup_to=3)
+
 if __name__ == '__main__':
     unittest.main()
