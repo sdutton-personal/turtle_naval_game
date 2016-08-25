@@ -29,6 +29,8 @@ class GraphicPoint(object):
         self.current_pos = (x, y)
         self.x = x
         self.y = y
+        self.last_heading = None
+        self.last_location = None
 
         self.set_init_angle_offset()
         self.update_point_position((0, 0), 0)
@@ -86,7 +88,15 @@ class GraphicPoint(object):
         :param current_heading: degree heading from 0-360 representing the direction of the overall objects orientation.
         :return: A tuple containing the (x,y) coordinates of the object.
         """
-        self.set_heading_adjustment(current_heading)
+        if current_heading != self.last_heading:
+            # adding this block to prevent needless calls to calculate the zero_adjusted_angle and the quadrant
+            # adjustment if the heading has not changed.
+            self.set_heading_adjustment(current_heading)
+            self.last_heading = current_heading
+        else:
+            if current_center_location_tup == self.last_location:
+                # if the heading has not changed, and the location has not changed, return the current position.
+                return self.current_pos
         sin = math.sin
         to_rads = math.radians
         x = (sin(to_rads(90 - self.zero_adjusted_angle)) * self.__init_distance) * self.quadrant_adjustment_tup[0]
@@ -104,24 +114,24 @@ class GraphicPoint(object):
         point is part of.
         :return:
         """
-        last_heading = current_heading + self.__init_angle_offset
-        if last_heading > 360:
-            last_heading -= 360
-        if last_heading <= 90:
+        adjusted_heading = current_heading + self.__init_angle_offset
+        if adjusted_heading > 360:
+            adjusted_heading -= 360
+        if adjusted_heading <= 90:
             # this is quadrant_1, x positive, y positive
-            self.zero_adjusted_angle = last_heading
+            self.zero_adjusted_angle = adjusted_heading
             self.quadrant_adjustment_tup = (1, 1)
-        elif 90 < last_heading <= 180:
+        elif 90 < adjusted_heading <= 180:
             # this is quadrant_2, x negative, y positive
-            self.zero_adjusted_angle = 90 - (last_heading - 90)
+            self.zero_adjusted_angle = 90 - (adjusted_heading - 90)
             self.quadrant_adjustment_tup = (-1, 1)
-        elif 180 < last_heading <= 270:
+        elif 180 < adjusted_heading <= 270:
             # this is quadrant_3, x negative, y negative
-            self.zero_adjusted_angle = last_heading - 180
+            self.zero_adjusted_angle = adjusted_heading - 180
             self.quadrant_adjustment_tup = (-1, -1)
         else:
             # else quadrant_4
-            self.zero_adjusted_angle = 90 - (last_heading - 270)
+            self.zero_adjusted_angle = 90 - (adjusted_heading - 270)
             self.quadrant_adjustment_tup = (1, -1)
 
 
