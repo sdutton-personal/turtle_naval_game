@@ -308,18 +308,18 @@ class GraphicShape(object):
     _scale_width = None
     _scale_length = None
 
-    def __init__(self, overall_length, overall_width, shape_to_overall_scale, scale=0):
+    def __init__(self, overall_length, overall_width, shape_to_overall_scale, scale=0, x_boundary=0, y_boundary=0):
         self.graphic_lines_lst = []
         self.points_to_draw_lst = []
         self._overall_length = overall_length
         self._overall_width = overall_width
         self._shape_to_overall_scale = shape_to_overall_scale
         self._scale = scale
-        self._scale_width = self._overall_width + (self._overall_width * self._scale / 100)
-        self._scale_length = self._overall_length + (self._overall_length * self._scale / 100)
+        self._scale_width = self._overall_width + (self._overall_width * self._scale / float(100))
+        self._scale_length = self._overall_length + (self._overall_length * self._scale / float(100))
         self.shape_out_of_bounds = False
-        self.x_boundary = None
-        self.y_boundary = None
+        self.x_boundary = x_boundary
+        self.y_boundary = y_boundary
 
         self.load_graphic_lines()
         self.load_points_to_draw()
@@ -357,9 +357,13 @@ class GraphicShape(object):
         else:
             return False
 
-    def is_shape_out_of_bounds(self, x_max, y_max):
+    def is_shape_out_of_bounds(self):
+        x_max = self.x_boundary
+        y_max = self.y_boundary
         x_min = x_max * -1
         y_min = y_max * -1
+        if sum([x_max, x_min, y_max, y_min])== 0:
+            return False
         result_lst = [0, 0]
         for line in self.graphic_lines_lst:
             if line.start_point_cur_loc[0] > x_max or line.end_point_cur_loc[0] > x_max:
