@@ -348,14 +348,17 @@ class GraphicShape(object):
 
     def is_point_inside_shape(self, point_in_question_tup):
 
-        intersection_reference_total = 0
+        to_left = False
+        to_right = False
         for line in self.graphic_lines_lst:
-            intersection_reference_total += line.is_intersected_by(point_in_question_tup)
-
-        if intersection_reference_total == 3:
-            return True
-        else:
-            return False
+            point_location = line.is_intersected_by(point_in_question_tup)
+            if point_location == 1:
+                to_left = True
+            elif point_location == 2:
+                to_right = True
+            if to_right and to_left:
+                return True
+        return False
 
     def is_shape_out_of_bounds(self):
         x_max = self.x_boundary
