@@ -115,6 +115,17 @@ class TurtleNavalTestBase(unittest.TestCase):
         if isinstance(self.expected, tuple):
             self.expected = tuple(round(y, round_to) for y in self.expected)
 
+    def tst_points_for_existence_in_shape(self, shape_to_test, points_in_shape_lst, points_out_of_shape_lst):
+        for point_in in points_in_shape_lst:
+            self.results = shape_to_test.is_point_inside_shape(point_in)
+            self.expected = True
+            msg = "\npoint {} was not found inside shape {} " \
+                  "result was False when it should have been True".format(point_in, shape_to_test)
+            self.run_equality_tst(msg=msg)
+        for point_out in points_out_of_shape_lst:
+            self.results = shape_to_test.is_point_inside_shape(point_out)
+            self.expected = False
+
     def run_equality_tst(self, msg=None, round_to=None, round_lst_tup_to=None):
         if not msg:
             msg = '\n\nThe result was not equal to the expected \n' \

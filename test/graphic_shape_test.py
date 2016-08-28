@@ -276,9 +276,11 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.expected = y_max
         self.run_equality_tst()
 
-    def shape_position_point_inside_test(self):
+    def test_is_point_inside_shape(self):
+        points_in_shape_lst = [(21, 9), (20.01111, 9.955), (20.01111, -9.955), (40, 0)]
+        points_out_of_shape_lst = [(19.99, 0), (19.99, 9), (19.99, -9), (35, 8), (35, -8), (51, 0)]
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale)
-
+        self.tst_points_for_existence_in_shape(bow, points_in_shape_lst, points_out_of_shape_lst)
 
 if __name__ == '__main__':
     unittest.main()
