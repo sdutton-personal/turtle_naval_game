@@ -125,6 +125,9 @@ class TurtleNavalTestBase(unittest.TestCase):
         for point_out in points_out_of_shape_lst:
             self.results = shape_to_test.is_point_inside_shape(point_out)
             self.expected = False
+            msg = "\npoint {} was found inside shape {} " \
+                  "result was True when it should have been False".format(point_out, shape_to_test)
+            self.run_equality_tst(msg=msg)
 
     def run_equality_tst(self, msg=None, round_to=None, round_lst_tup_to=None):
         if not msg:
