@@ -276,11 +276,37 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.expected = y_max
         self.run_equality_tst()
 
-    def test_is_point_inside_shape(self):
-        points_in_shape_lst = [(21, 9), (20.01111, 9.955), (20.01111, -9.955), (40, 0)]
+    def test_is_point_inside_shape_bow(self):
+        points_in_shape_lst = [(21, 9), (20.01111, 9.955), (20.01111, -9.955), (40, 0), (35, 4), (35, -2)]
         points_out_of_shape_lst = [(19.99, 0), (19.99, 9), (19.99, -9), (35, 8), (35, -8), (51, 0)]
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale)
         self.tst_points_for_existence_in_shape(bow, points_in_shape_lst, points_out_of_shape_lst)
+
+        bow.update_shape_position((-10, -10), 0)
+        points_in_shape_lst = [(11, -1), (10.01111, -.045), (10.01111, -19.955), (30, -10)]
+        points_out_of_shape_lst = [(9.99, -10), (9.99, -1), (9.99, -19), (25, -2), (25, -18), (41, -10)]
+        self.tst_points_for_existence_in_shape(bow, points_in_shape_lst, points_out_of_shape_lst)
+
+        bow.update_shape_position((0, 0), 90)
+        points_in_shape_lst = [(9, 21), (9.955, 20.01111), (-9.955, 20.01111), (0, 40)]
+        points_out_of_shape_lst = [(0, 19.99), (9, 19.99), (-9, 19.99), (8, 35), (-8, 35), (0, 51)]
+        self.tst_points_for_existence_in_shape(bow, points_in_shape_lst, points_out_of_shape_lst)
+
+    def test_is_point_inside_shape_hull(self):
+        points_in_shape_lst = [(19.99, 9.99), (19.99, -9.99), (-19.99, 9.99), (-19.99, -9.99), (0, 0), (0, 5), (19.99, 0)]
+        points_out_of_shape_lst = [(20.1, 0), (0, 10.4), (23, 4), (3, -12), (-30, -8), (-5, -29), (-6, 13)]
+        hull = HullShape(self.length, self.width, self.hull_to_bow_scale)
+        self.tst_points_for_existence_in_shape(hull, points_in_shape_lst, points_out_of_shape_lst)
+
+        hull.update_shape_position((20, -10), 90)
+        points_in_shape_lst = [(10.1, 9.99), (29.99, 9.99), (10.1, -29.99), (29.99, -29.99), (20, 0), (30, 10), (20, -10)]
+        points_out_of_shape_lst = [(0, 0), (9, 9), (11, 11), (9, 0), (31, 0), (20, -31), (31, -20), (-20, -10)]
+        self.tst_points_for_existence_in_shape(hull, points_in_shape_lst, points_out_of_shape_lst)
+
+        hull.update_shape_position((2, 2), 63.4)
+        points_in_shape_lst = [(2, 23), (19, 15.4), (1.98, -20), (-15.8, -11.4), (0, 0), (-5, 0), (0, 5), (10, 12), (-10, -13), (-6, 7), (4, -2)]
+        points_out_of_shape_lst = [(-10.5, 0), (12.5, 0), (-8, 10), (-12, -18), (10, -5), (4, 23.5), (0, 24), (0, -20)]
+        self.tst_points_for_existence_in_shape(hull, points_in_shape_lst, points_out_of_shape_lst)
 
 if __name__ == '__main__':
     unittest.main()
