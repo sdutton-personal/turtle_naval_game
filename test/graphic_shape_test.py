@@ -308,5 +308,27 @@ class TestGraphicShape(TurtleNavalTestBase):
         points_out_of_shape_lst = [(-10.5, 0), (12.5, 0), (-8, 10), (-12, -18), (10, -5), (4, 23.5), (0, 24), (0, -20)]
         self.tst_points_for_existence_in_shape(hull, points_in_shape_lst, points_out_of_shape_lst)
 
+    def test_is_point_inside_shape_stern(self):
+        points_in_shape_lst = [(-20.001, 9.99), (-20.001, -9.99), (-20.001, 0), (-39.999, 0), (-39.999, 6.55),
+                               (-39.999, -6.55), (-30, 8.25), (-30, -8.25)]
+        points_out_of_shape_lst = [(-19.1, 0), (-21, 10.4), (-21, -10.4), (-40.1, -9), (-40.1, 9), (-21, -10.4),
+                                   (-30, 9.25), (-30, -9.25)]
+        stern = SternShape(self.length, self.width, self.hull_to_bow_scale)
+        self.tst_points_for_existence_in_shape(stern, points_in_shape_lst, points_out_of_shape_lst)
+
+        stern.update_shape_position((20, -10), 90)
+        points_in_shape_lst = [(10.5, -30.5), (29.5, -30.5), (13.5, -49.5), (26.5, -49.5), (20, -49.999),
+                               (12, -40), (12, -40), (20, -35)]
+        points_out_of_shape_lst = [(9.99, -30.5), (10.5, -29.99), (29.5, -29.99), (30.5, -30.5),
+                                   (13, -49.5), (13.5, -50.5), (27, -49.5), (26.5, -50.5)]
+        self.tst_points_for_existence_in_shape(stern, points_in_shape_lst, points_out_of_shape_lst)
+
+        stern.update_shape_position((2, 2), 63.4)
+        points_in_shape_lst = [(-15.5, -12), (1.5, -20.5), (-9.5, -36), (-21.5, -30), (0, -21), (-5, -18), (-5, -28),
+                               (-15, -32), (-18, -20)]
+        points_out_of_shape_lst = [(-16.5, -12), (-15.5, -11.5), (2, -20.5), (1.5, -19), (-9, -36), (-9.5, -37),
+                                   (-22, -30), (-21.5, -31), (2, 2), (0, 0), (-10, 0)]
+        self.tst_points_for_existence_in_shape(stern, points_in_shape_lst, points_out_of_shape_lst)
+
 if __name__ == '__main__':
     unittest.main()
