@@ -330,5 +330,49 @@ class TestGraphicShape(TurtleNavalTestBase):
                                    (-22, -30), (-21.5, -31), (2, 2), (0, 0), (-10, 0)]
         self.tst_points_for_existence_in_shape(stern, points_in_shape_lst, points_out_of_shape_lst)
 
+    def test_bounds_method_1(self):
+        bow = BowShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=0, y_boundary=0)
+
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        bow.update_shape_position((1002, 10002), 90)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+    def test_bounds_method_2(self):
+        bow = BowShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
+
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        bow.update_shape_position((951, 0), 0)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [1, 0]
+        self.run_equality_tst()
+
+        bow.update_shape_position((951, 991), 0)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [1, 1]
+        self.run_equality_tst()
+
+        bow.update_shape_position((-951, 991), 180)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [-1, 1]
+        self.run_equality_tst()
+
+        bow.update_shape_position((-991, -991), 180)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [-1, -1]
+        self.run_equality_tst()
+
+        bow.update_shape_position((991, -951), 270)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [1, -1]
+        self.run_equality_tst()
+
 if __name__ == '__main__':
     unittest.main()
