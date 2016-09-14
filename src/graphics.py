@@ -272,6 +272,16 @@ class GraphicLine(object):
             angle = math.degrees(math.asin(abs(y_1 - y_2) / self.hyp_distance))
         except ZeroDivisionError:
             angle = 0
+        except ValueError as err:
+            if 1 < abs(y_1 - y_2) / self.hyp_distance < 1.0001:
+                # due to rounding issues it is possible that this number may end up larger than 1, and that would
+                # generate a rounding error.  If the Value error is deemed to be caused by a rounding issue,
+                # we will set the angle to 90, as math.degrees(math.asin(1)) would generate a result of 90.
+                angle = 90
+            else:
+                # if the value error was not found to be caused by rounding in the range of tolerance, we will
+                # re raise the exception.
+                raise Exception('ValueError:  {}'.format(err))
 
         # get the slope, this is used to determine how to correct the y and also to shift the y value positive or
         # negative
@@ -365,7 +375,7 @@ class GraphicShape(object):
         y_max = self.y_boundary
         x_min = x_max * -1
         y_min = y_max * -1
-        if sum([x_max, x_min, y_max, y_min])== 0:
+        if sum([x_max, y_max]) == 0:
             return False
         result_lst = [0, 0]
         for line in self.graphic_lines_lst:
