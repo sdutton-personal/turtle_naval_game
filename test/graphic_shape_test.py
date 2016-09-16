@@ -354,6 +354,41 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.expected = [1, 0]
         self.run_equality_tst()
 
+        bow.update_shape_position((950, 0), 0)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        bow.update_shape_position((0, 951), 90)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [0, 1]
+        self.run_equality_tst()
+
+        bow.update_shape_position((0, 950), 90)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        bow.update_shape_position((-951, 0), 180)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [-1, 0]
+        self.run_equality_tst()
+
+        bow.update_shape_position((-950, 0), 180)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        bow.update_shape_position((0, -951), 270)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = [0, -1]
+        self.run_equality_tst()
+
+        bow.update_shape_position((0, -950), 270)
+        self.results = bow.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
         bow.update_shape_position((951, 991), 0)
         self.results = bow.is_shape_out_of_bounds()
         self.expected = [1, 1]
@@ -371,6 +406,140 @@ class TestGraphicShape(TurtleNavalTestBase):
 
         bow.update_shape_position((991, -951), 270)
         self.results = bow.is_shape_out_of_bounds()
+        self.expected = [1, -1]
+        self.run_equality_tst()
+
+    def test_bounds_method_3(self):
+        hull = HullShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
+
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        hull.update_shape_position((981, 0), 0)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [1, 0]
+        self.run_equality_tst()
+
+        hull.update_shape_position((980, 0), 0)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        hull.update_shape_position((0, 981), 90)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [0, 1]
+        self.run_equality_tst()
+
+        hull.update_shape_position((0, 980), 90)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        hull.update_shape_position((-981, 0), 180)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [-1, 0]
+        self.run_equality_tst()
+
+        hull.update_shape_position((-980, 0), 180)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        hull.update_shape_position((0, -981), 270)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [0, -1]
+        self.run_equality_tst()
+
+        hull.update_shape_position((0, -980), 270)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        hull.update_shape_position((981, 991), 0)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [1, 1]
+        self.run_equality_tst()
+
+        hull.update_shape_position((-981, 991), 180)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [-1, 1]
+        self.run_equality_tst()
+
+        hull.update_shape_position((-991, -991), 180)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [-1, -1]
+        self.run_equality_tst()
+
+        hull.update_shape_position((991, -981), 270)
+        self.results = hull.is_shape_out_of_bounds()
+        self.expected = [1, -1]
+        self.run_equality_tst()
+
+    def test_bounds_method_4(self):
+        stern = SternShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
+
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        stern.update_shape_position((961, 0), 180)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [1, 0]
+        self.run_equality_tst()
+
+        stern.update_shape_position((960, 0), 180)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        stern.update_shape_position((0, 961), 270)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [0, 1]
+        self.run_equality_tst()
+
+        stern.update_shape_position((0, 960), 270)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        stern.update_shape_position((-961, 0), 0)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [-1, 0]
+        self.run_equality_tst()
+
+        stern.update_shape_position((-960, 0), 0)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        stern.update_shape_position((0, -961), 90)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [0, -1]
+        self.run_equality_tst()
+
+        stern.update_shape_position((0, -960), 90)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = False
+        self.run_equality_tst()
+
+        stern.update_shape_position((961, 991), 180)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [1, 1]
+        self.run_equality_tst()
+
+        stern.update_shape_position((-961, 991), 0)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [-1, 1]
+        self.run_equality_tst()
+
+        stern.update_shape_position((-991, -991), 0)
+        self.results = stern.is_shape_out_of_bounds()
+        self.expected = [-1, -1]
+        self.run_equality_tst()
+
+        stern.update_shape_position((991, -961), 90)
+        self.results = stern.is_shape_out_of_bounds()
         self.expected = [1, -1]
         self.run_equality_tst()
 
