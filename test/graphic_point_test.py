@@ -1,7 +1,7 @@
 import unittest
 
 from base_test import TurtleNavalTestBase
-from src.graphics import GraphicPoint
+from src.base_graphics import GraphicPoint
 
 
 class TestGraphicPoints(TurtleNavalTestBase):

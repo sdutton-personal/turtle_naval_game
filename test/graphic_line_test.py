@@ -1,8 +1,8 @@
 import unittest
 
 from base_test import TurtleNavalTestBase
-from src.graphics import GraphicLine
-from src.graphics import GraphicPoint
+from src.base_graphics import GraphicLine
+from src.base_graphics import GraphicPoint
 
 
 class TestGraphicLines(TurtleNavalTestBase):
