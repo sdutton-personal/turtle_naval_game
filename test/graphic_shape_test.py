@@ -1,9 +1,6 @@
 import unittest
 
 from base_test import TurtleNavalTestBase
-from src.graphics import GraphicLine
-from src.graphics import GraphicPoint
-from src.graphics import GraphicShape
 from src.graphics import HullShape
 from src.graphics import BowShape
 from src.graphics import SternShape
@@ -82,6 +79,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         stern.update_shape_position((10, 10), 40)
 
     def test_scale_args(self):
+        # tests that the scale acts as it should.
         hull_to_bow_scale = 2
 
         # scale is default, so it is 0, hull to bow scale is 2
@@ -158,6 +156,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.run_equality_tst()
 
     def test_boundary_args(self):
+        # testing the boundary args are set properly, and defaults are set if applicable.
         x_max = 200
         y_max = 200
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale)
@@ -277,6 +276,8 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.run_equality_tst()
 
     def test_is_point_inside_shape_bow(self):
+        # tests the points in the list to either be in or out of the shape in question, the shape will be moved to
+        # different points, and headings during this test.
         points_in_shape_lst = [(21, 9), (20.01111, 9.955), (20.01111, -9.955), (40, 0), (35, 4), (35, -2)]
         points_out_of_shape_lst = [(19.99, 0), (19.99, 9), (19.99, -9), (35, 8), (35, -8), (51, 0)]
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale)
@@ -293,6 +294,8 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.tst_points_for_existence_in_shape(bow, points_in_shape_lst, points_out_of_shape_lst)
 
     def test_is_point_inside_shape_hull(self):
+        # tests the points in the list to either be in or out of the shape in question, the shape will be moved to
+        # different points, and headings during this test.
         points_in_shape_lst = [(19.99, 9.99), (19.99, -9.99), (-19.99, 9.99), (-19.99, -9.99), (0, 0), (0, 5), (19.99, 0)]
         points_out_of_shape_lst = [(20.1, 0), (0, 10.4), (23, 4), (3, -12), (-30, -8), (-5, -29), (-6, 13)]
         hull = HullShape(self.length, self.width, self.hull_to_bow_scale)
@@ -309,6 +312,8 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.tst_points_for_existence_in_shape(hull, points_in_shape_lst, points_out_of_shape_lst)
 
     def test_is_point_inside_shape_stern(self):
+        # tests the points in the list to either be in or out of the shape in question, the shape will be moved to
+        # different points, and headings during this test.
         points_in_shape_lst = [(-20.001, 9.99), (-20.001, -9.99), (-20.001, 0), (-39.999, 0), (-39.999, 6.55),
                                (-39.999, -6.55), (-30, 8.25), (-30, -8.25)]
         points_out_of_shape_lst = [(-19.1, 0), (-21, 10.4), (-21, -10.4), (-40.1, -9), (-40.1, 9), (-21, -10.4),
@@ -331,6 +336,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.tst_points_for_existence_in_shape(stern, points_in_shape_lst, points_out_of_shape_lst)
 
     def test_bounds_method_1(self):
+        # test general bounds operation.
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=0, y_boundary=0)
 
         self.results = bow.is_shape_out_of_bounds()
@@ -343,6 +349,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.run_equality_tst()
 
     def test_bounds_method_2(self):
+        # tests that the bow shape will return the proper indexes when out of bounds
         bow = BowShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
 
         self.results = bow.is_shape_out_of_bounds()
@@ -410,6 +417,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.run_equality_tst()
 
     def test_bounds_method_3(self):
+        # tests that the hull shape will return the proper indexes when out of bounds
         hull = HullShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
 
         self.results = hull.is_shape_out_of_bounds()
@@ -477,6 +485,7 @@ class TestGraphicShape(TurtleNavalTestBase):
         self.run_equality_tst()
 
     def test_bounds_method_4(self):
+        # tests that the stern shape will return the correct indexes when out of bounds
         stern = SternShape(self.length, self.width, self.hull_to_bow_scale, x_boundary=1000, y_boundary=1000)
 
         self.results = stern.is_shape_out_of_bounds()

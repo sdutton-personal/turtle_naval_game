@@ -8,7 +8,7 @@ class GraphicPoint(object):
     (0,0).  This GraphicPoint would represent one point of a line, of a shape of a Turtle object or for our purposes
     some sort of Naval Ship.
     Naval Ship (Turtle)
-        Contains 1 or Many StructureShapes()
+        Contains 1 or Many GraphicShapes()
             Contains 1 or Many GraphicLines()
                 Contains 2 GraphicPoints()
                     Contains 2 Coordinates()
@@ -136,6 +136,23 @@ class GraphicPoint(object):
 
 
 class GraphicLine(object):
+    """
+    This class is to be initialized with two points, either GraphicPoint objects as defined in this file, or tuples
+    consisting of two integers each.  These two points or tuples will represent a GraphicLine that is this object.
+    This GraphicLine will consist of two GraphicPoints.  Multiple GraphicLines will make a GraphicShape, and multiple
+    GraphicShapes will make a Turtle object or for our purposes some sort of Naval Ship.
+    Naval Ship (Turtle)
+        Contains 1 or Many GraphicShapes()
+            Contains 1 or Many GraphicLines()
+                Contains 2 GraphicPoints()
+                    Contains 2 Coordinates()
+    Optional Arguments:
+    is_drawn: sets an attribute with this value, either True or False to represent if this line should be drawn.  This
+    attribute will not affect anything in this class, but is used by the parent class GraphicShape when loading points
+    to draw.
+    test_for_intersection: sets an attribute with this value, either True or False.  If True will run the intersection
+    test, if False, will always return False for line intersecting.
+    """
 
     def __init__(self, start_point, end_point, is_drawn=True, test_for_intersection=True):
         if not isinstance(start_point, (tuple, GraphicPoint)):
@@ -312,6 +329,27 @@ class GraphicLine(object):
 
 
 class GraphicShape(object):
+    """
+    This is a base class, it should be inherited and used to create a custom GraphicShape.  When inheriting and
+    creating the new graphic shape make sure to overwrite the load_graphic_lines method with a method to load the
+    GraphicLine Objects that will make up the custom shape.  Multiple GraphicLines will make a GraphicShape, and
+    multiple GraphicShapes will make a Turtle object or for our purposes some sort of Naval Ship.
+    Naval Ship (Turtle)
+        Contains 1 or Many GraphicShapes()
+            Contains 1 or Many GraphicLines()
+                Contains 2 GraphicPoints()
+                    Contains 2 Coordinates()
+    Required args:
+    overall_length: The length of the Turtle object
+    overall_width: The width of the turtle object
+    shape_to_overall_scale: A number representing the size of this Shape to the overall Turtle.
+    scale: A number representing the scale of the object in general.  if scale is negative the object will shrink,
+    and if scale is positive, it will become larger.
+    x_boundary: the x point that if any point in this shape crosses, the shape will be considered out of bounds for
+    that axis.  If set or left to 0, shape will never be out of bounds.
+    y_boundary: the y point that if any point in this shape crosses, the shape will be considered out of bounds for that
+    axis.  If set or left to 0, shape will never be out of bounds.
+    """
 
     _shape_to_overall_scale = None
     _scale = None
@@ -342,6 +380,11 @@ class GraphicShape(object):
         pass
 
     def load_points_to_draw(self):
+        """
+        This method will load up the points needed for drawing from the self.graphic_lines_lst.  If the line.is_drawn
+        attribute is false, lines will not be drawn.
+        :return:
+        """
         last_point = None
         for line in self.graphic_lines_lst:
             if line.is_drawn:
@@ -353,11 +396,20 @@ class GraphicShape(object):
                 last_point = end_point_tup
 
     def update_shape_position(self, cur_ref_point_loc_tup, heading):
+        """
+        This method is called to update the current shapes position in reference to the center tuple location.
+        :param cur_ref_point_loc_tup: The center reference point of the containing turtle object.
+        :param heading: The heading or direction in degrees of the turtle object.
+        :return:
+        """
         for line in self.graphic_lines_lst:
             line.update_line_position(cur_ref_point_loc_tup, heading)
 
     def is_point_inside_shape(self, point_in_question_tup):
-
+        """
+        This method can be called to see if the point_in_question_tup is inside the GraphicShape object.  If
+        point_in_question is in the shape, this method will return True, if not, will return False
+        """
         to_left = False
         to_right = False
         for line in self.graphic_lines_lst:
@@ -371,6 +423,16 @@ class GraphicShape(object):
         return False
 
     def is_shape_out_of_bounds(self):
+        """
+        This method can be called to determine if any part of this shape is out of bounds.  If all of the shape is
+        in bounds this method will return False.  If part of the shape is out of bounds a list will be returned
+        with two integers, the first representing if the shape is out of bounds on the x axis and the second if
+        the shape is out of bounds on the y axis.  If the shape is out of bounds on the positive x axis but
+        in bounds on the y axis the returned result would be [1,0].  If the shape is out of bounds on both the
+        x and y positive axis the result would be [1,1], and if the shape is out of bounds on the positive x axis
+        and the negative y axis the result would be [1,-1].
+        :return:
+        """
         x_max = self.x_boundary
         y_max = self.y_boundary
         x_min = x_max * -1
