@@ -1,4 +1,5 @@
 import math
+import turtle
 
 
 class GraphicPoint(object):
@@ -452,3 +453,92 @@ class GraphicShape(object):
             return result_lst
         else:
             return False
+
+
+class BaseBoat(object):
+    """
+    This is the base class for boats and possibly all moving objects.  When this class is inherited, the sub class
+    should overwrite the below attributes with the desired settings.  The sub class MUST also have an __init__ that
+    will define self.boat as an instance of turtle.Turtle()
+
+    Example:
+    def __init__(self):
+        self.boat = turtle.Turtle(shape='circle')
+    """
+    def __init__(self):
+        self.speed = 0  # overwrite this to change initial speed
+        self.speed_increment = .01  # overwrite this to change the incremental rate of speed change
+        self.max_speed = .5  # overwrite this to change the maximum speed of movement allowed
+        self.turn_increment = 0.01  # overwrite this to change the increment of turning
+        self.heading = 0  # overwrite this to change the initial heading.
+        self.max_turn_increment = .05  # overwrite this to change the maximum rate that the object can turn.
+
+        self.boat = turtle.Turtle()
+        self.graphic_shape_lst = []
+
+    def load_shapes(self):
+        """
+        overwrite this method to append graphic shapes to the graphic_shape_lst. Then call this method from the
+        extended __init__ of the child class.
+        :return:
+        """
+        pass
+
+    def move(self):
+        """
+        Moves forward (or backward) at the current speed setting, should be called regularly in a loop with a slight
+        sleep timer in between calls
+        """
+        self.boat.forward(self.speed)
+        if self.heading > 0:
+            self.boat.left(self.heading)
+        elif self.heading < 0:
+            self.boat.right(self.heading * -1)
+
+    def right(self):
+        """
+        Alters the direction to the right by turn increment degrees
+        """
+        self.heading -= self.turn_increment
+        if self.heading < self.max_turn_increment * -1:
+            self.heading = self.max_turn_increment * -1
+
+    def left(self):
+        """
+        Alters the direction to the left by turn increment degrees
+        """
+        self.heading += self.turn_increment
+        if self.heading > self.max_turn_increment:
+            self.heading = self.max_turn_increment
+
+    def speed_up(self):
+        """
+        Increases the current speed by the speed increment, unless that speed is greater than max speed, if so speed
+        is set to max speed.
+        """
+        self.speed += self.speed_increment
+        if self.speed > self.max_speed:
+            self.speed = self.max_speed
+
+    def slow_down(self):
+        """
+        Decreases the current speed (or increases to reverse speed) unless that reverse speed is faster in reverse than
+        1/2 of the max speed.
+        """
+        self.speed -= self.speed_increment
+        if self.speed < self.max_speed * -1 / float(2):
+            self.speed = self.max_speed * -1 / float(2)
+
+    def return_shape(self):
+        # (y,x)
+        master_shape = turtle.Shape("compound")
+        for shape in self.graphic_shape_lst:
+            sub_shape = tuple(shape.points_to_draw_lst)
+            master_shape.addcomponent(sub_shape, shape.fill_color, shape.line_color)
+        return master_shape
+
+    def update_object_position_points(self):
+        current_pos_tup = self.boat.pos()
+        heading = self.boat.heading()
+        for shape in self.graphic_shape_lst:
+            shape.update_shape_position(current_pos_tup, heading)
