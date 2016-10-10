@@ -1,6 +1,9 @@
+import turtle
+
 from base_graphics import GraphicPoint
 from base_graphics import GraphicLine
 from base_graphics import GraphicShape
+from base_graphics import BaseBoat
 
 
 class BowShape(GraphicShape):
@@ -50,3 +53,26 @@ class SternShape(GraphicShape):
         self.graphic_lines_lst.append(GraphicLine(stern_end_port_point, stern_end_starboard_point))
         self.graphic_lines_lst.append(GraphicLine(stern_end_starboard_point, stern_hull_starboard_point))
         self.graphic_lines_lst.append(GraphicLine(stern_hull_starboard_point, stern_hull_port_point, is_drawn=False))
+
+
+class MainBoat(BaseBoat):
+
+    def __init__(self):
+        super(MainBoat, self).__init__()
+        self.speed = 0
+        self.speed_increment = .01
+        self.max_speed = .2
+        self.turn_increment = 0.02
+        self.heading = 0
+        self.max_turn_increment = .1
+
+        self.ship_width = 30
+        self.ship_length = 200
+        self.mb_scale = 5
+        self.load_shapes()
+
+    def load_shapes(self):
+        bow = BowShape(self.ship_length, self.ship_width, self.mb_scale)
+        hull = HullShape(self.ship_length, self.ship_width, self.mb_scale)
+        stern = SternShape(self.ship_length, self.ship_width, self.mb_scale)
+        self.graphic_shape_lst.extend([bow, hull, stern])
