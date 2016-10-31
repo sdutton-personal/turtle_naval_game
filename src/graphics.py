@@ -55,10 +55,10 @@ class SternShape(GraphicShape):
         self.graphic_lines_lst.append(GraphicLine(stern_hull_starboard_point, stern_hull_port_point, is_drawn=False))
 
 
-class MainBoat(BaseBoat):
+class BattleShip(BaseBoat):
 
-    def __init__(self):
-        super(MainBoat, self).__init__()
+    def __init__(self, x_boundary, y_boundary):
+        super(BattleShip, self).__init__(x_boundary, y_boundary)
         self.speed = 0
         self.speed_increment = .01
         self.max_speed = .2
@@ -72,7 +72,10 @@ class MainBoat(BaseBoat):
         self.load_shapes()
 
     def load_shapes(self):
-        bow = BowShape(self.ship_length, self.ship_width, self.mb_scale)
-        hull = HullShape(self.ship_length, self.ship_width, self.mb_scale)
-        stern = SternShape(self.ship_length, self.ship_width, self.mb_scale)
+        bow = BowShape(self.ship_length, self.ship_width, self.mb_scale,
+                       x_boundary=self.x_boundary, y_boundary=self.y_boundary)
+        hull = HullShape(self.ship_length, self.ship_width, self.mb_scale,
+                         x_boundary=self.x_boundary, y_boundary=self.y_boundary)
+        stern = SternShape(self.ship_length, self.ship_width, self.mb_scale,
+                           x_boundary=self.x_boundary, y_boundary=self.y_boundary)
         self.graphic_shape_lst.extend([bow, hull, stern])
