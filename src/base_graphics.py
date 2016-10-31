@@ -465,16 +465,20 @@ class BaseBoat(object):
     def __init__(self):
         self.boat = turtle.Turtle(shape='circle')
     """
-    def __init__(self):
+    def __init__(self, x_boundary, y_boundary):
         self.speed = 0  # overwrite this to change initial speed
         self.speed_increment = .01  # overwrite this to change the incremental rate of speed change
         self.max_speed = .5  # overwrite this to change the maximum speed of movement allowed
         self.turn_increment = 0.01  # overwrite this to change the increment of turning
         self.heading = 0  # overwrite this to change the initial heading.
         self.max_turn_increment = .05  # overwrite this to change the maximum rate that the object can turn.
+        self.shape_name = None
 
+        self.x_boundary = x_boundary
+        self.y_boundary = y_boundary
         self.boat = turtle.Turtle()
         self.graphic_shape_lst = []
+        self.out_of_bounds_lst = []
 
     def load_shapes(self):
         """
@@ -489,6 +493,8 @@ class BaseBoat(object):
         Moves forward (or backward) at the current speed setting, should be called regularly in a loop with a slight
         sleep timer in between calls
         """
+        self.update_object_position_points()
+        self.set_out_of_bounds_lst()
         self.boat.forward(self.speed)
         if self.heading > 0:
             self.boat.left(self.heading)
@@ -542,3 +548,106 @@ class BaseBoat(object):
         heading = self.boat.heading()
         for shape in self.graphic_shape_lst:
             shape.update_shape_position(current_pos_tup, heading)
+
+    def set_out_of_bounds_lst(self):
+        self.out_of_bounds_lst = []
+        for shape in self.graphic_shape_lst:
+            shape_bounds_lst = shape.is_shape_out_of_bounds()
+            if shape_bounds_lst:
+                # if the shape is out of bounds ..
+                if not self.out_of_bounds_lst:
+                    # if no other shapes have been out of bounds, the boat out of bounds list is the shapes out of
+                    # bounds list
+                    self.out_of_bounds_lst = shape_bounds_lst
+                else:
+                    # if another shape in this object has been out of bounds, we will need to merge both of lists, by
+                    # favoring any value that is not 0.
+                    if not self.out_of_bounds_lst[0]:
+                        self.out_of_bounds_lst[0] = shape_bounds_lst[0]
+                    if not self.out_of_bounds_lst[1]:
+                        self.out_of_bounds_lst[1] = shape_bounds_lst[1]
+
+    def copy_settings_from_clone(self, clone_instance_obj):
+        self.speed = clone_instance_obj.speed
+        self.boat.setheading(clone_instance_obj.boat.heading())
+        self.turn_increment = clone_instance_obj.turn_increment
+        self.shape_name = clone_instance_obj.shape_name
+        self.boat.shape(self.shape_name)
+
+    def register_shape(self, shape_name):
+        self.shape_name = shape_name
+        self.boat.shape(shape_name)
+
+
+class GraphicObjectContainer(object):
+
+    def __init__(self, sub_instance_of_base_boat_class):
+        self.primary_object = sub_instance_of_base_boat_class
+        self.object_clone = None
+
+    def move(self):
+        self.clone_management()
+        self.primary_object.move()
+        if self.object_clone:
+            self.object_clone.move()
+
+    def right(self):
+        self.primary_object.right()
+        if self.object_clone:
+            self.object_clone.right()
+
+    def left(self):
+        self.primary_object.left()
+        if self.object_clone:
+            self.object_clone.left()
+
+    def speed_up(self):
+        self.primary_object.speed_up()
+        if self.object_clone:
+            self.object_clone.speed_up()
+
+    def slow_down(self):
+        self.primary_object.slow_down()
+        if self.object_clone:
+            self.object_clone.slow_down()
+
+    def clone_management(self):
+        if not self.object_clone:
+            # no clone currently present, check if one is needed, if so create it.
+            if self.primary_object.out_of_bounds_lst:
+                # clone is needed, create it
+                obj_class = self.primary_object.__class__
+                self.object_clone = obj_class(self.primary_object.x_boundary, self.primary_object.y_boundary)
+                if self.primary_object.out_of_bounds_lst[0]:
+                    # if the x position is not 0, then set the x position to 2 times the boundary * -1 + the current x
+                    clone_x_pos = self.primary_object.x_boundary * 2 * self.primary_object.out_of_bounds_lst[0] * -1
+                    clone_x_pos += self.primary_object.boat.pos()[0]
+                else:
+                    # if the x position is 0 set its x to the opposite of the current x
+                    clone_x_pos = self.primary_object.boat.pos()[0] * -1
+                if self.primary_object.out_of_bounds_lst[1]:
+                    # if the y position is not 0, the y of the clone will be 2 times the boundary * -1 + the current y
+                    clone_y_pos = self.primary_object.y_boundary * 2 * self.primary_object.out_of_bounds_lst[1] * -1
+                    clone_y_pos += self.primary_object.boat.pos()[1]
+                else:
+                    clone_y_pos = self.primary_object.boat.pos()[1] * -1
+                self.object_clone.boat.setposition(clone_x_pos, clone_y_pos)
+                self.object_clone.copy_settings_from_clone(self.primary_object)
+        else:
+            # clone is active, check to see if the clone is either 1 not needed anymore, or 2 the clone is the primary
+            # and the primary is not needed anymore.
+            if not self.primary_object.out_of_bounds_lst:
+                # primary object is no longer out of bounds, kill the clone
+                self.object_clone.boat.clear()
+                self.object_clone.boat.ht()
+                del self.object_clone
+                self.object_clone = None
+            else:
+                # primary object is still out of bounds, check to see if the clone is out of bounds as well, if not, the
+                # primary object is completely out of bounds and the clone is now our active and primary object.
+                if not self.object_clone.out_of_bounds_lst:
+                    self.primary_object.boat.clear()
+                    self.primary_object.boat.ht()
+                    del self.primary_object
+                    self.primary_object = self.object_clone
+                    self.object_clone = None
