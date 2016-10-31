@@ -48,8 +48,8 @@ class MainScreen(object):
     de_bounce_limit = .1
     last_input = time.time()
     exit_now = False
-    screen_height = 1000
-    screen_width = 1000
+    screen_height = 245
+    screen_width = 335
 
     def __init__(self, left_fun, right_fun, speed_up_fun, slow_down_fun):
         self.screen = turtle.Screen()
