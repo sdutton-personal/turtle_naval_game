@@ -2,6 +2,12 @@ import math
 import turtle
 
 
+def get_opposite_given_angle_and_adjacent(adjacent_side, angle_in_degrees):
+    if round(angle_in_degrees, 1) == 90:
+        return 0
+    return math.tan(math.radians(angle_in_degrees)) * adjacent_side
+
+
 class GraphicPoint(object):
     """
     This class is to be initialized with an x and a y coordinate that represent the initial offset of this point from
